@@ -35,6 +35,8 @@ $errorFor = static function (string $field) use ($errors): string {
             Con tu cuenta accedes a los cursos gratuitos y a las plantillas descargables.
           </p>
 
+          <?php require GB_APP_PATH . '/Views/partials/student-door-notice.php'; ?>
+
           <?php if ($message !== '' && $errors === []): ?>
             <div class="account-alert account-alert--error" role="alert"><?= e($message) ?></div>
           <?php endif; ?>

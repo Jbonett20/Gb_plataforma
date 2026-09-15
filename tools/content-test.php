@@ -132,8 +132,19 @@ $legacyRoot = dirname(__DIR__, 2) . '/proyectoold';
 $legacyIndex = $legacyRoot . '/index.php';
 
 if (!is_file($legacyIndex)) {
-    fwrite(STDERR, sprintf("No se encuentra el sitio anterior en %s\n", $legacyRoot));
-    exit(1);
+    // La carpeta del sitio anterior era sólo una referencia de trabajo y ya no
+    // está. Esta comparación se hizo mientras se cargaba el contenido y sirvió
+    // para encontrar los huecos del primer intento; hoy no hay con qué comparar,
+    // así que se avisa sin tratarlo como un fallo: el contenido ya está cargado
+    // y el resto del proyecto no depende de ella.
+    echo "Comparación con el sitio anterior: OMITIDA\n";
+    echo str_repeat('=', 78) . "\n";
+    echo "No se encontró la carpeta de referencia en:\n  " . $legacyRoot . "\n\n";
+    echo "Era una copia de trabajo del sitio anterior, no parte de la plataforma.\n";
+    echo "Esta comprobación sirvió para cargar el contenido; hoy no hay nada que comparar.\n";
+    echo "Para volver a ejecutarla, copia el sitio anterior en esa carpeta.\n";
+
+    exit(0);
 }
 
 // La caché se vacía para comprobar el HTML recién generado, no una copia previa.

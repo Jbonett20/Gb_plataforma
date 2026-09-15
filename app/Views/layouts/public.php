@@ -61,15 +61,120 @@ $whatsapp = setting('whatsapp');
 
   <style>
     /* Acceso de estudiantes en el encabezado. Es una función de la plataforma,
-       no una sección del contenido, así que se ve en todas las páginas. */
-    .header-account__link {
+       no una sección del contenido, así que se ve en todas las páginas.
+       Los dos botones comparten clase: uno no puede verse más importante que
+       el otro, porque son las dos mitades de lo mismo (entrar o darse de alta). */
+    /* Separación: los dos botones no pueden tocarse entre sí (son dos cosas
+       distintas) ni pegarse al menú, que es lo que pasaba antes. */
+    .header-account {
+      gap: 16px;
+      margin-left: 30px;
+    }
+
+    /* --- Quién eres, cuando hay sesión abierta ---------------------------- */
+    .header-account__menu { position: relative; }
+
+    .header-account__user {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      list-style: none;
+      cursor: pointer;
       color: var(--heading-color);
       font-weight: 600;
-      font-size: .95rem;
+      font-size: .9rem;
+      line-height: 1;
+      padding: 9px 12px;
+      border: 1px solid var(--accent-line);
+      border-radius: 4px;
+      white-space: nowrap;
+      transition: .3s;
+    }
+    .header-account__user::-webkit-details-marker { display: none; }
+    .header-account__user:hover {
+      color: var(--accent-color);
+      border-color: var(--accent-color);
+      background: var(--accent-soft);
+    }
+    .header-account__caret { font-size: .75rem; transition: transform .2s; }
+    .header-account__menu[open] .header-account__caret { transform: rotate(180deg); }
+
+    .header-account__dropdown {
+      position: absolute;
+      right: 0;
+      top: calc(100% + 8px);
+      min-width: 250px;
+      background: var(--surface-color);
+      border: 1px solid var(--accent-line);
+      border-radius: 8px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, .12);
+      padding: .75rem;
+      z-index: 1200;
+    }
+    .header-account__hi {
+      margin: 0 0 .5rem;
+      padding: 0 .35rem;
+      font-size: .82rem;
+      color: var(--default-color);
+      white-space: normal;
+    }
+    .header-account__hi strong { color: var(--heading-color); }
+    .header-account__dropdown a,
+    .header-account__dropdown button {
+      display: block;
+      width: 100%;
+      text-align: left;
+      background: none;
+      border: 0;
+      padding: .5rem .35rem;
+      border-radius: 4px;
+      color: var(--heading-color);
+      font-weight: 600;
+      font-size: .88rem;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .header-account__dropdown a:hover,
+    .header-account__dropdown button:hover {
+      background: var(--accent-soft);
+      color: var(--accent-color);
+    }
+
+    .header-account__button {
+      display: inline-flex;
+      align-items: center;
+      color: var(--contrast-color);
+      background: var(--accent-color);
+      font-weight: 600;
+      font-size: .9rem;
+      line-height: 1;
+      padding: 10px 18px;
+      border-radius: 4px;
       text-decoration: none;
       white-space: nowrap;
+      transition: .3s;
     }
-    .header-account__link:hover { color: var(--accent-color); }
+    .header-account__button:hover,
+    .header-account__button:focus {
+      color: var(--contrast-color);
+      background: color-mix(in srgb, var(--accent-color), transparent 15%);
+    }
+    @media (max-width: 1200px) {
+      /* El menú se pliega en el alternador y main.css fija el orden: logo,
+         botones, alternador. Sin decir aquí el orden de los botones, se irían
+         al principio de la fila —antes del logo— porque el orden por defecto
+         (0) es menor que el del logo (1). Y aquí la separación va a la derecha,
+         entre los botones y el alternador del menú. */
+      .header-account { order: 2; gap: 12px; margin: 0 15px 0 0; }
+      .header-account__button { padding: 9px 15px; }
+      .header-account__user { padding: 8px 11px; }
+    }
+    @media (max-width: 400px) {
+      .header-account { gap: 10px; margin-right: 10px; }
+      .header-account__button { padding: 8px 12px; font-size: .85rem; }
+      .header-account__user { padding: 7px 10px; font-size: .85rem; }
+      .header-account__dropdown { min-width: 220px; }
+    }
   </style>
 
   <?= $head ?? '' ?>

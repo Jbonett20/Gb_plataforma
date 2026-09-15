@@ -27,6 +27,15 @@ final class GuestMiddleware implements MiddlewareInterface
             return $next($request);
         }
 
+        // «guest:student» marca las puertas del área de estudiantes (entrar y
+        // crear cuenta). Quien tiene abierta la sesión del panel puede abrirlas
+        // —para entrar con otra cuenta, por ejemplo—, pero un clic en un botón
+        // del sitio público nunca debe terminar dentro del panel: sería pasar
+        // por una puerta para aparecer en otra habitación.
+        if ($this->auth->isAdmin() && in_array('student', $args, true)) {
+            return $next($request);
+        }
+
         $destination = $this->auth->isAdmin() ? $this->adminPath : $this->studentPath;
 
         return Response::redirect(url($destination));

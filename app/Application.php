@@ -138,8 +138,9 @@ final class Application
 
         $container->singleton(CourseModuleRepository::class, static fn (Container $c): CourseModuleRepository => new CourseModuleRepository($c->get(PDO::class)));
 
-        $container->singleton(LessonRepository::class, static fn (Container $c): LessonRepository => new LessonRepository($c->get(PDO::class)));
+        $container->singleton(SettingRepository::class, static fn (Container $c): SettingRepository => new SettingRepository($c->get(PDO::class)));
 
+        $container->singleton(LessonRepository::class, static fn (Container $c): LessonRepository => new LessonRepository($c->get(PDO::class)));
         $container->singleton(EnrollmentRepository::class, static fn (Container $c): EnrollmentRepository => new EnrollmentRepository($c->get(PDO::class)));
 
         $container->singleton(LessonProgressRepository::class, static fn (Container $c): LessonProgressRepository => new LessonProgressRepository($c->get(PDO::class)));

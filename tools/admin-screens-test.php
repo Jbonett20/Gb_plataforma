@@ -170,10 +170,10 @@ try {
     }
 }
 
-$restantes = (int) $pdo->query('SELECT COUNT(*) FROM users')->fetchColumn();
+$restantes = (int) $pdo->query('SELECT COUNT(*) FROM users WHERE email LIKE "zz-%"')->fetchColumn();
 
 echo str_repeat('-', 70) . PHP_EOL;
-echo 'Cuentas restantes: ' . $restantes . PHP_EOL;
+echo 'Cuentas de prueba restantes: ' . $restantes . PHP_EOL;
 echo $failures === 0 && $restantes === 0
     ? "Resultado: todas las comprobaciones pasaron.\n"
     : "Resultado: {$failures} comprobación(es) fallaron.\n";

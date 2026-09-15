@@ -38,8 +38,11 @@ final class AuthController extends Controller
 
     public function showLogin(Request $request): Response
     {
-        if ($this->auth->check()) {
-            return $this->redirect($this->auth->isAdmin() ? '/admin' : '/mi-cuenta');
+        // La sesión del panel no cierra esta puerta: quien administra puede
+        // querer entrar con una cuenta de estudiante desde el mismo navegador.
+        // La vista le avisa de que tiene la sesión abierta y le ofrece cerrarla.
+        if ($this->auth->check() && !$this->auth->isAdmin()) {
+            return $this->redirect('/mi-cuenta');
         }
 
         return $this->respond('auth.login', $this->pageData($this->composer->chrome() + [
@@ -91,7 +94,14 @@ final class AuthController extends Controller
                 // los fallos anteriores hasta un bloqueo que ya no aplica.
                 $this->throttle->clear('login', ThrottleMiddleware::identifierFor($request, 'email'));
 
-                return $this->redirect($this->auth->consumeIntendedUrl() ?? '/mi-cuenta');
+                // Esta puerta es la del área de estudiantes, pero quien entra
+                // manda: si las credenciales son de una cuenta de administración,
+                // no se le puede dejar en «no tienes permiso» —su área no es
+                // ésta—, así que se le deja donde administra. Cuando la cuenta
+                // es de estudiante, entra a su área como siempre.
+                $destino = $this->auth->isAdmin() ? '/admin' : '/mi-cuenta';
+
+                return $this->redirect($this->auth->consumeIntendedUrl() ?? $destino);
             }
 
             $message = (string) $this->auth->failureMessage();
@@ -109,7 +119,8 @@ final class AuthController extends Controller
 
     public function showRegister(Request $request): Response
     {
-        if ($this->auth->check()) {
+        // Igual que en el ingreso: la sesión del panel no impide ver esta puerta.
+        if ($this->auth->check() && !$this->auth->isAdmin()) {
             return $this->redirect('/mi-cuenta');
         }
 
