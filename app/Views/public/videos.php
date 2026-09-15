@@ -1,0 +1,6 @@
+<?php
+declare(strict_types=1);
+$videos = is_array($videos ?? null) ? $videos : [];
+?>
+<section class="section bg-light-section"><div class="container py-5"><div class="text-center mb-5"><p class="eyebrow text-brand">Biblioteca</p><h1>Videos para aprender</h1></div><div class="row g-4">
+<?php foreach ($videos as $video): ?><div class="col-lg-4 col-md-6"><article class="card h-100 border-0 shadow-sm"><?php $cover = media_url((int) ($video['cover_media_id'] ?? 0), 700); ?><?php if ($cover !== null): ?><img src="<?= e($cover) ?>" class="card-img-top" alt="<?= e((string) $video['title']) ?>" style="height:220px;object-fit:cover;"><?php endif; ?><div class="card-body d-flex flex-column"><small class="text-muted"><?= e((string) ($video['category'] ?? 'Video')) ?></small><h2 class="h4 mt-2"><?= e((string) $video['title']) ?></h2><p class="text-muted flex-grow-1"><?= e((string) ($video['summary'] ?? '')) ?></p><a class="btn bg-brand text-white" href="<?= e(url('videos/' . $video['slug'])) ?>">Ver video</a></div></article></div><?php endforeach; ?><?php if ($videos === []): ?><p class="text-center text-muted">Todavía no hay videos disponibles.</p><?php endif; ?></div></div></section>

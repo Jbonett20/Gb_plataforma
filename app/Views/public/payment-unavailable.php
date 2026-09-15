@@ -1,0 +1,2 @@
+<?php declare(strict_types=1); ?>
+<section class="section bg-light-section"><div class="container py-5"><div class="row justify-content-center"><div class="col-lg-7 text-center"><p class="eyebrow text-brand">Compra</p><h1>La compra todavía no está disponible</h1><p class="lead text-muted"><?= e((string) ($message ?? 'La pasarela de pagos todavía no está activa.')) ?></p><a class="btn bg-brand text-white" href="<?= e(url('cursos')) ?>">Volver a cursos</a></div></div></div></section>

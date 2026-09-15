@@ -1,0 +1,5 @@
+<?php
+declare(strict_types=1);
+$payment = is_array($payment ?? null) ? $payment : [];
+?>
+<section class="section bg-light-section"><div class="container py-5"><div class="row justify-content-center"><div class="col-lg-7 text-center"><p class="eyebrow text-brand">Compra</p><h1>Estado de tu compra</h1><?php if ($payment === []): ?><p class="lead text-muted">No encontramos una orden con esa referencia. La dirección no concede acceso por sí sola.</p><?php else: ?><p class="lead text-muted">La orden <strong><?= e((string) $payment['reference']) ?></strong> está <strong><?= e((string) $payment['status']) ?></strong>.</p><p class="text-muted">El acceso solo se habilita cuando la confirmación verificada de la pasarela cambia el estado a pagado.</p><?php endif; ?><a class="btn bg-brand text-white" href="<?= e(url('mi-cuenta')) ?>">Ir a mi cuenta</a></div></div></div></section>

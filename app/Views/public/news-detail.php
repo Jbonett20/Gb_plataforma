@@ -1,0 +1,6 @@
+<?php
+declare(strict_types=1);
+$article = is_array($article ?? null) ? $article : [];
+$cover = media_url((int) ($article['cover_media_id'] ?? 0), 1200);
+?>
+<article class="section bg-light-section"><div class="container py-5"><div class="row justify-content-center"><div class="col-lg-9"><?php if ($cover !== null): ?><img src="<?= e($cover) ?>" class="img-fluid rounded shadow-sm mb-4" alt="<?= e((string) $article['title']) ?>"><?php endif; ?><p class="eyebrow text-brand"><?= e((string) ($article['category'] ?? 'Noticias')) ?></p><h1><?= e((string) $article['title']) ?></h1><p class="text-muted"><?= e((string) ($article['author_name'] ?? '')) ?> · <?= e((string) ($article['published_at'] ?? '')) ?></p><?php if (!empty($article['summary'])): ?><p class="lead"><?= e((string) $article['summary']) ?></p><?php endif; ?><div class="content-copy"><?= nl2br(e((string) $article['body'])) ?></div><?php if (!empty($article['tags'])): ?><p class="small text-muted mt-4">Etiquetas: <?= e((string) $article['tags']) ?></p><?php endif; ?></div></div></div></article>

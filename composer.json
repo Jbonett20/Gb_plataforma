@@ -1,0 +1,41 @@
+{
+    "name": "gonzalezballesteros/gbplataforma",
+    "description": "Plataforma dinámica de González & Ballesteros: CMS, cursos, estudiantes y ventas.",
+    "type": "project",
+    "license": "proprietary",
+    "require": {
+        "php": ">=8.1",
+        "ext-pdo": "*",
+        "ext-pdo_mysql": "*",
+        "ext-gd": "*",
+        "ext-fileinfo": "*",
+        "ext-mbstring": "*",
+        "ext-json": "*",
+        "vlucas/phpdotenv": "^5.6",
+        "phpmailer/phpmailer": "^6.9",
+        "dompdf/dompdf": "^3.0",
+        "setasign/fpdf": "^1.8",
+        "setasign/fpdi": "^2.6"
+    },
+    "autoload": {
+        "psr-4": {
+            "GB\\": "app/"
+        }
+    },
+    "config": {
+        "sort-packages": true,
+        "optimize-autoloader": true
+    },
+    "scripts": {
+        "migrate": "php database/migrate.php",
+        "seed": "php database/seed.php",
+        "verify": "php database/verify.php",
+        "smoke": "php tools/smoke-test.php",
+        "security": "php tools/middleware-test.php",
+        "blocks": "php tools/blocks-test.php",
+        "images": "php tools/images-test.php",
+        "protected": "php tools/protected-check.php",
+        "admin:create": "php tools/create-admin.php",
+        "prune": "php tools/prune-media.php"
+    }
+}

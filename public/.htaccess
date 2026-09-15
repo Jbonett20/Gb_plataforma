@@ -1,0 +1,40 @@
+# =============================================================================
+# gbplataforma — reescritura de rutas
+# Este directorio (public/) es el único que debe exponerse en el servidor web.
+# =============================================================================
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Si el proyecto vive en un subdirectorio, ajusta esta base.
+    # RewriteBase /gbplataforma/public/
+
+    # No reescribir archivos ni directorios existentes (assets, uploads, etc.)
+    RewriteCond %{REQUEST_FILENAME} -f [OR]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+
+    # Todo lo demás pasa por el front controller.
+    RewriteRule ^ index.php [L]
+</IfModule>
+
+# --- Cabeceras de seguridad -------------------------------------------------
+# NO se declaran aquí: las envía el middleware SecurityHeaders de la
+# aplicación. Si se declararan en los dos sitios, el navegador recibiría cada
+# cabecera duplicada (Apache añade las suyas después de las de PHP cuando se
+# usa "Header always set").
+#
+# HSTS sí depende de la aplicación, porque sólo debe anunciarse cuando la
+# petición llega por conexión cifrada.
+
+# --- Bloquear acceso a archivos sensibles -----------------------------------
+<FilesMatch "^\.(env|git|gitignore)">
+    Require all denied
+</FilesMatch>
+
+<FilesMatch "\.(sql|md|json|lock)$">
+    Require all denied
+</FilesMatch>
+
+# --- Evitar listado de directorios ------------------------------------------
+Options -Indexes

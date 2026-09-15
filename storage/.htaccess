@@ -1,0 +1,8 @@
+# Denegar todo acceso web. Este directorio contiene material de cursos de pago
+# y originales de imágenes: se sirve ÚNICAMENTE a través de la aplicación.
+Require all denied
+
+<IfModule !mod_authz_core.c>
+    Order allow,deny
+    Deny from all
+</IfModule>

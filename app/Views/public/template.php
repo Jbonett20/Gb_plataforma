@@ -1,0 +1,8 @@
+<?php
+declare(strict_types=1);
+$template = is_array($template ?? null) ? $template : [];
+$preview = media_url((int) ($template['preview_media_id'] ?? 0), 1000);
+$size = (int) ($template['file_size_bytes'] ?? 0);
+$sizeLabel = $size >= 1048576 ? number_format($size / 1048576, 1) . ' MB' : number_format(max(1, $size / 1024), 0) . ' KB';
+?>
+<section class="section bg-light-section"><div class="container py-5"><div class="row g-5 align-items-start"><div class="col-lg-6"><?php if ($preview !== null): ?><img src="<?= e($preview) ?>" class="img-fluid rounded shadow-sm" alt="<?= e((string) $template['title']) ?>"><?php endif; ?></div><div class="col-lg-6"><p class="eyebrow text-brand"><?= e((string) ($template['category'] ?? 'Plantilla')) ?></p><h1><?= e((string) $template['title']) ?></h1><p class="lead text-muted"><?= e((string) ($template['summary'] ?? '')) ?></p><p>Formato: <?= e((string) ($template['file_mime'] ?? 'archivo')) ?>. Peso: <?= e($sizeLabel) ?>.</p><?php if (!empty($template['description'])): ?><div class="content-copy mb-4"><?= nl2br(e((string) $template['description'])) ?></div><?php endif; ?><a class="btn bg-brand text-white" href="<?= e(url('plantillas/' . $template['slug'] . '/descargar')) ?>"><i class="bi bi-download me-1"></i>Descargar plantilla</a><?php if ((int) $template['requires_registration'] === 1): ?><p class="small text-muted mt-2">Necesitas iniciar sesión para descargarla.</p><?php endif; ?></div></div></div></section>

@@ -1,0 +1,26 @@
+# Dependencias
+/vendor/
+
+# Configuración real (contiene credenciales)
+/.env
+
+# Contenido generado en tiempo de ejecución
+/public/uploads/*
+!/public/uploads/.gitkeep
+/storage/cache/*
+!/storage/cache/.gitkeep
+/storage/logs/*
+!/storage/logs/.gitkeep
+/storage/sessions/*
+!/storage/sessions/.gitkeep
+/storage/uploads/originals/*
+!/storage/uploads/originals/.gitkeep
+/storage/protected/*
+!/storage/protected/.gitkeep
+/storage/backups/*
+!/storage/backups/.gitkeep
+
+# Sistema operativo / editor
+.DS_Store
+Thumbs.db
+*.log

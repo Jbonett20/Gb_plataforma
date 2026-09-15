@@ -1,0 +1,6 @@
+<?php
+declare(strict_types=1);
+$templates = is_array($templates ?? null) ? $templates : [];
+?>
+<section class="section bg-light-section"><div class="container py-5"><div class="text-center mb-5"><p class="eyebrow text-brand">Recursos gratuitos</p><h1>Plantillas para tu trabajo</h1></div><div class="row g-4">
+<?php foreach ($templates as $template): ?><div class="col-lg-4 col-md-6"><article class="card h-100 border-0 shadow-sm"><?php $preview = media_url((int) ($template['preview_media_id'] ?? 0), 700); ?><?php if ($preview !== null): ?><img src="<?= e($preview) ?>" class="card-img-top" alt="<?= e((string) $template['title']) ?>" style="height:220px;object-fit:cover;"><?php endif; ?><div class="card-body d-flex flex-column"><small class="text-muted"><?= e((string) ($template['category'] ?? 'Recurso')) ?></small><h2 class="h4 mt-2"><?= e((string) $template['title']) ?></h2><p class="text-muted flex-grow-1"><?= e((string) ($template['summary'] ?? '')) ?></p><a class="btn bg-brand text-white" href="<?= e(url('plantillas/' . $template['slug'])) ?>">Ver plantilla</a></div></article></div><?php endforeach; ?><?php if ($templates === []): ?><p class="text-center text-muted">Todavía no hay plantillas disponibles.</p><?php endif; ?></div></div></section>

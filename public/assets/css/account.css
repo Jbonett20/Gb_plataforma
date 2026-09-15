@@ -1,0 +1,346 @@
+/* =============================================================================
+   account.css — Acceso y área personal
+   -----------------------------------------------------------------------------
+   Estilos de las pantallas de ingreso, registro, recuperación de contraseña y
+   área del estudiante. Se apoyan en los tokens de theme.css, así que respetan
+   la línea gráfica del sitio sin tocar main.css.
+   ============================================================================= */
+
+.account-page {
+  background-color: var(--light-background-color);
+}
+
+.account-section {
+  padding: 120px 0 80px;
+}
+
+.account-card {
+  background-color: var(--surface-color);
+  border: 1px solid var(--heading-soft);
+  border-radius: 14px;
+  padding: 2rem;
+  box-shadow: 0 6px 30px rgba(11, 35, 65, 0.06);
+}
+
+.account-card__title {
+  font-family: var(--font-heading);
+  color: var(--heading-color);
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin-bottom: .35rem;
+}
+
+.account-card__lead {
+  color: var(--default-color);
+  font-size: .95rem;
+  margin-bottom: 1.5rem;
+}
+
+.account-field {
+  margin-bottom: 1.15rem;
+}
+
+.account-field label {
+  display: block;
+  font-family: var(--font-ui);
+  font-size: .85rem;
+  font-weight: 500;
+  color: var(--heading-color);
+  margin-bottom: .35rem;
+}
+
+.account-field input,
+.account-field select {
+  width: 100%;
+  padding: .7rem .9rem;
+  border: 1px solid var(--accent-line);
+  border-radius: 8px;
+  font-family: var(--font-default);
+  font-size: .95rem;
+  color: var(--default-color);
+  background-color: var(--background-color);
+  transition: border-color .2s ease, box-shadow .2s ease;
+}
+
+.account-field input:focus {
+  outline: none;
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+.account-field input[aria-invalid="true"] {
+  border-color: #b3261e;
+}
+
+.account-field__help {
+  font-size: .8rem;
+  color: #6b7280;
+  margin-top: .3rem;
+}
+
+.account-field__error {
+  font-size: .82rem;
+  color: #b3261e;
+  margin-top: .3rem;
+}
+
+.account-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem;
+  width: 100%;
+  padding: .8rem 1.2rem;
+  border: 0;
+  border-radius: 8px;
+  background-color: var(--accent-color);
+  color: var(--contrast-color);
+  font-family: var(--font-ui);
+  font-size: .95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: filter .2s ease;
+}
+
+.account-button:hover {
+  filter: brightness(1.12);
+}
+
+.account-button--ghost {
+  width: auto;
+  background-color: transparent;
+  color: var(--accent-color);
+  border: 1px solid var(--accent-line);
+}
+
+.account-links {
+  margin-top: 1.25rem;
+  font-size: .88rem;
+  text-align: center;
+}
+
+.account-links a {
+  color: var(--accent-color);
+  text-decoration: none;
+}
+
+.account-links a:hover {
+  text-decoration: underline;
+}
+
+/* --- Avisos ----------------------------------------------------------------- */
+
+.account-alert {
+  border-radius: 10px;
+  padding: .85rem 1rem;
+  font-size: .9rem;
+  margin-bottom: 1.25rem;
+  border: 1px solid transparent;
+}
+
+.account-alert--error {
+  background-color: #fdecea;
+  border-color: #f5c2bd;
+  color: #8c1d18;
+}
+
+.account-alert--ok {
+  background-color: #e8f5e9;
+  border-color: #bfe3c2;
+  color: #1b5e20;
+}
+
+.account-alert--info {
+  background-color: var(--accent-soft);
+  border-color: var(--accent-line);
+  color: var(--heading-color);
+}
+
+/* --- Requisitos de contraseña ----------------------------------------------- */
+
+.account-requirements {
+  list-style: none;
+  padding: 0;
+  margin: .5rem 0 1.25rem;
+  font-size: .85rem;
+  color: var(--default-color);
+}
+
+.account-requirements li {
+  display: flex;
+  align-items: flex-start;
+  gap: .5rem;
+  padding: .15rem 0;
+}
+
+.account-requirements i {
+  color: var(--accent-color);
+  margin-top: .15rem;
+}
+
+/* --- Área personal ---------------------------------------------------------- */
+
+.account-header {
+  background-color: var(--background-color);
+  border-bottom: 1px solid var(--heading-soft);
+  padding: 1.25rem 0;
+  margin-bottom: 2rem;
+}
+
+.account-header__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.account-header h2 {
+  font-family: var(--font-heading);
+  color: var(--heading-color);
+  font-size: 1.35rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.account-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem;
+}
+
+.account-nav a {
+  font-family: var(--font-ui);
+  font-size: .88rem;
+  padding: .45rem .95rem;
+  border-radius: 40px;
+  color: var(--heading-color);
+  text-decoration: none;
+  border: 1px solid var(--heading-soft);
+  background-color: var(--background-color);
+}
+
+.account-nav a.is-active,
+.account-nav a:hover {
+  background-color: var(--accent-color);
+  border-color: var(--accent-color);
+  color: var(--contrast-color);
+}
+
+.course-card {
+  background-color: var(--surface-color);
+  border: 1px solid var(--heading-soft);
+  border-radius: 14px;
+  overflow: hidden;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.course-card__body {
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+}
+
+.course-card__title {
+  font-family: var(--font-heading);
+  color: var(--heading-color);
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: .35rem;
+}
+
+.course-card__summary {
+  color: var(--default-color);
+  font-size: .9rem;
+  flex: 1 1 auto;
+}
+
+.progress {
+  height: 8px;
+  border-radius: 40px;
+  background-color: var(--heading-soft);
+  overflow: hidden;
+}
+
+.progress-bar {
+  background-color: var(--accent-color);
+  transition: width .3s ease;
+}
+
+.lesson-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.lesson-list__module {
+  font-family: var(--font-ui);
+  font-size: .82rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  color: var(--accent-color);
+  margin: 1rem 0 .5rem;
+}
+
+.lesson-list__item {
+  display: flex;
+  align-items: flex-start;
+  gap: .75rem;
+  padding: .6rem 0;
+  border-bottom: 1px solid var(--heading-soft);
+  font-size: .92rem;
+  color: var(--default-color);
+}
+
+.lesson-list__item:last-child {
+  border-bottom: 0;
+}
+
+.lesson-list__item.is-done .lesson-list__title {
+  text-decoration: line-through;
+  color: #6b7280;
+}
+
+.lesson-list__title {
+  flex: 1 1 auto;
+}
+
+.lesson-list__toggle {
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  color: var(--accent-color);
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+.empty-state {
+  background-color: var(--surface-color);
+  border: 1px dashed var(--accent-line);
+  border-radius: 14px;
+  padding: 2.5rem 1.5rem;
+  text-align: center;
+  color: var(--default-color);
+}
+
+.empty-state i {
+  font-size: 2.4rem;
+  color: var(--accent-color);
+  display: block;
+  margin-bottom: .75rem;
+}
+
+@media (max-width: 575.98px) {
+  .account-section {
+    padding: 100px 0 60px;
+  }
+
+  .account-card {
+    padding: 1.5rem;
+  }
+}

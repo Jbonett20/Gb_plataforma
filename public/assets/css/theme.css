@@ -1,0 +1,188 @@
+/* =============================================================================
+   theme.css — Tokens de identidad visual de González & Ballesteros
+   -----------------------------------------------------------------------------
+   Los valores de este archivo son los MISMOS que usa el sitio actual en
+   `assets/css/main.css`. No se alteró la línea gráfica: este archivo se carga
+   DESPUÉS de main.css y es la fuente autoritativa de la marca.
+
+   Si algún día cambia un color de marca, cámbialo AQUÍ y en main.css para
+   mantener el sitio consistente.
+   ============================================================================= */
+
+:root {
+  /* --- Marca ------------------------------------------------------------- */
+  --accent-color: #602350;          /* Color de marca: botones, enlaces, acentos */
+  --heading-color: #0b2341;         /* Títulos y subtítulos */
+  --default-color: #444444;         /* Texto general */
+  --background-color: #ffffff;      /* Fondo del sitio */
+  --surface-color: #ffffff;         /* Fondo de tarjetas y bloques */
+  --contrast-color: #ffffff;        /* Texto sobre color de marca */
+  --light-background-color: #f7f9fd;/* Fondo de secciones claras */
+
+  /* --- Navegación -------------------------------------------------------- */
+  --nav-color: #444444;
+  --nav-hover-color: #602350;
+  --nav-mobile-background-color: #ffffff;
+  --nav-dropdown-background-color: #ffffff;
+  --nav-dropdown-color: #444444;
+  --nav-dropdown-hover-color: #602350;
+
+  /* --- Tipografías (las mismas del sitio actual) ------------------------- */
+  --font-default: "Roboto", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-heading: "Raleway", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-ui: "Poppins", system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  /* --- Derivados de marca (transparencias) ------------------------------- */
+  --accent-soft: rgba(96, 35, 80, 0.08);
+  --accent-line: rgba(96, 35, 80, 0.24);
+  --heading-soft: rgba(11, 35, 65, 0.08);
+}
+
+/* =============================================================================
+   Anti-deformación de recursos visuales
+   -----------------------------------------------------------------------------
+   Todo bloque de imagen debe vivir dentro de un contenedor de proporción fija.
+   El contenedor decide el encuadre; la imagen NUNCA estira ni comprime.
+   Refuerza en el frontend el recorte que ya hizo el backend (media pipeline).
+   ============================================================================= */
+
+.ratio-media {
+  position: relative;
+  display: block;
+  width: 100%;
+  overflow: hidden;
+  background-color: var(--heading-soft);
+}
+
+.ratio-media > img,
+.ratio-media > video,
+.ratio-media > iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;         /* recorta en lugar de deformar */
+  object-position: center;   /* sobrescrito por el punto focal del panel */
+  display: block;
+}
+
+.ratio-media > iframe {
+  object-fit: unset;         /* un reproductor no se recorta */
+}
+
+/* Proporciones que usan los perfiles de imagen de config/images.php */
+.ratio-hero-slide     { aspect-ratio: var(--ratio, 16 / 9); }
+.ratio-course-cover   { aspect-ratio: 16 / 9; }
+.ratio-news-cover     { aspect-ratio: 3 / 2; }
+.ratio-team-photo     { aspect-ratio: 3 / 4; }
+.ratio-template-thumb { aspect-ratio: 4 / 3; }
+.ratio-cta-banner     { aspect-ratio: 21 / 9; }
+
+/* Reserva de espacio mientras carga: evita el salto de maquetación */
+.ratio-media.is-loading { background-image: linear-gradient(90deg, transparent, var(--accent-soft), transparent); }
+
+/* Contenedor cuadrado para avatares y logos pequeños */
+.ratio-square { aspect-ratio: 1 / 1; }
+
+/* =============================================================================
+   Utilidades de marca
+   ============================================================================= */
+
+.bg-brand        { background-color: var(--accent-color) !important; }
+.bg-brand-soft   { background-color: var(--accent-soft) !important; }
+.bg-light-section{ background-color: var(--light-background-color) !important; }
+.text-brand      { color: var(--accent-color) !important; }
+.border-brand    { border-color: var(--accent-color) !important; }
+
+/* =============================================================================
+   Acordeón de preguntas frecuentes
+   -----------------------------------------------------------------------------
+   Las secciones generadas desde el panel no llevan estilos propios en línea:
+   el color de marca del acordeón vive aquí, junto al resto de los tokens.
+   ============================================================================= */
+
+.accordion-button:not(.collapsed) {
+  background-color: var(--accent-color);
+  color: var(--contrast-color);
+}
+
+.accordion-button:focus {
+  box-shadow: none;
+}
+
+.accordion-button::after {
+  filter: invert(1);
+}
+
+/* =============================================================================
+   Campo de imagen del panel (ajuste de encuadre)
+   -----------------------------------------------------------------------------
+   La vista previa usa la proporción real del destino y `object-fit: cover`, de
+   modo que muestra exactamente el recorte que aplicará el servidor.
+   ============================================================================= */
+
+.image-field {
+  max-width: 520px;
+}
+
+.image-field__preview {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  border: 1px solid var(--accent-line);
+  border-radius: .5rem;
+  background-color: var(--accent-soft);
+  cursor: grab;
+  touch-action: none;   /* permite arrastrar también en pantalla táctil */
+}
+
+.image-field__preview--free {
+  aspect-ratio: auto;
+}
+
+.image-field__preview.is-dragging {
+  cursor: grabbing;
+}
+
+.image-field__preview.is-uploading {
+  opacity: .7;
+}
+
+.image-field__preview > img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.image-field__preview--free > img {
+  height: auto;
+  object-fit: contain;
+}
+
+.image-field__empty {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  color: var(--accent-color);
+  font-size: .875rem;
+}
+
+.image-field__controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .5rem;
+  margin-top: .5rem;
+}
+
+.image-field__status:empty {
+  display: none;
+}
+
+/* Marca el final del tema; no añadir estilos de sección sueltos aquí. */
