@@ -87,6 +87,49 @@ return [
     ],
 
     // =========================================================================
+    // Ajustes del sitio editables desde el panel.
+    //
+    // De esta declaración sale la pantalla de Ajustes: cada apartado es una
+    // pantalla y cada campo es un control del formulario. Igual que con los
+    // bloques, si un campo no está declarado aquí no se puede editar, así que
+    // este archivo es la lista de lo que se puede tocar sin programar.
+    //
+    // Tipos de campo: text | textarea | boolean | url | email
+    // =========================================================================
+    'settings_screens' => [
+        'encabezado' => [
+            'label' => 'Encabezado y accesos',
+            'path' => 'admin/ajustes/encabezado',
+            'icon' => 'bi-input-cursor-text',
+            'help' => 'Son los botones que se ven arriba a la derecha en todas las páginas del sitio. '
+                . 'Llevan al área de estudiantes: entrar y crear cuenta. Nunca dan acceso al panel de '
+                . 'administración, que tiene su propia dirección y no se anuncia en el sitio.',
+            'fields' => [
+                'header_login_label' => [
+                    'label' => 'Texto del botón para entrar',
+                    'help' => 'Si lo dejas vacío se usa «Inicia sesión».',
+                    'type' => 'text',
+                    'default' => 'Inicia sesión',
+                    'max' => 40,
+                ],
+                'header_register_label' => [
+                    'label' => 'Texto del botón para crear cuenta',
+                    'help' => 'Si lo dejas vacío se usa «Regístrate».',
+                    'type' => 'text',
+                    'default' => 'Regístrate',
+                    'max' => 40,
+                ],
+                'header_buttons_visible' => [
+                    'label' => 'Mostrar los botones en el encabezado',
+                    'help' => 'Si lo apagas, el encabezado queda sólo con el menú y el acceso se busca al pie.',
+                    'type' => 'boolean',
+                    'default' => '1',
+                ],
+            ],
+        ],
+    ],
+
+    // =========================================================================
     // Pantallas del panel. `help` se muestra en la propia pantalla y explica qué
     // controla y qué cambia en el sitio público. Sólo se listan pantallas que
     // existen: un enlace a algo sin construir sería un enlace roto.
@@ -166,6 +209,14 @@ return [
             'icon' => 'bi-shield-check',
             'help' => 'Registro de quién intentó abrir material protegido y con qué resultado. '
                 . 'Sirve para investigar enlaces vencidos o accesos sin permiso.',
+        ],
+        [
+            'group' => 'settings',
+            'label' => 'Encabezado y accesos',
+            'path' => 'admin/ajustes/encabezado',
+            'icon' => 'bi-input-cursor-text',
+            'help' => 'Los botones que se ven arriba a la derecha en todas las páginas del sitio. '
+                . 'Llevan al área de estudiantes: entrar y crear cuenta. Nunca dan acceso al panel.',
         ],
         [
             'group' => 'settings',

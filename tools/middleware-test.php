@@ -28,6 +28,7 @@ use GB\Application;
 use GB\Middleware\AuthMiddleware;
 use GB\Middleware\CsrfMiddleware;
 use GB\Middleware\ForceHttpsMiddleware;
+use GB\Middleware\GuestMiddleware;
 use GB\Middleware\MiddlewareInterface;
 use GB\Middleware\RoleMiddleware;
 use GB\Middleware\SecurityHeadersMiddleware;
@@ -38,6 +39,7 @@ use GB\Support\Csrf;
 use GB\Support\Model;
 use GB\Support\Request;
 use GB\Support\Response;
+use GB\Support\Router;
 use GB\Support\Session;
 use GB\Support\Throttle;
 use GB\Support\Validator;
@@ -279,6 +281,83 @@ check('el administrador entra a las rutas de administración', fn () => runMiddl
 
 $deniedLogged = (int) $pdo->query("SELECT COUNT(*) FROM audit_logs WHERE action = 'access_denied'")->fetchColumn();
 check('los accesos denegados quedan registrados', fn () => $deniedLogged > 0);
+
+// --- Las dos puertas de estudiantes no llevan al panel -----------------------
+echo "\nPuertas de estudiantes\n";
+
+// «Inicia sesión» y «Regístrate» del encabezado llevan siempre al área de
+// estudiantes. Con la sesión del panel abierta antes se saltaba al panel, de
+// modo que pulsar un botón del sitio público terminaba dentro de la
+// administración. Eso ya no pasa: las dos puertas se muestran.
+$guestMiddleware = $container->get(GuestMiddleware::class);
+
+check('con sesión de administración, entrar muestra la puerta del estudiante',
+    fn () => runMiddleware($guestMiddleware, makeRequest('GET', '/ingresar'), ['student'])->status() === 200);
+check('con sesión de administración, crear cuenta muestra la puerta del estudiante',
+    fn () => runMiddleware($guestMiddleware, makeRequest('GET', '/registro'), ['student'])->status() === 200);
+
+$puertaDelPanel = runMiddleware($guestMiddleware, makeRequest('GET', '/admin/ingresar'));
+
+check('la puerta del panel sigue llevando al panel', fn () => $puertaDelPanel->status() === 302
+    && str_contains((string) ($puertaDelPanel->headers()['Location'] ?? ''), '/admin'));
+
+// Y la comprobación de extremo a extremo: se pide la dirección de verdad, con la
+// sesión del panel abierta, y se mira lo que recibe el navegador.
+$router = $container->get(Router::class);
+(require GB_BASE_PATH . '/config/routes.php')($router);
+
+$pedir = static fn (string $uri): Response => $router->dispatch(new Request([], [], [
+    'REQUEST_METHOD' => 'GET',
+    'REQUEST_URI' => $uri,
+    'SCRIPT_NAME' => '/index.php',
+    'HTTP_HOST' => 'localhost',
+    'SERVER_NAME' => 'localhost',
+    'REMOTE_ADDR' => '127.0.0.1',
+], [], []));
+
+$paginaDeIngreso = $pedir('/ingresar');
+
+check('pulsar «Inicia sesión» con la sesión del panel abierta no acaba en el panel',
+    fn () => $paginaDeIngreso->status() === 200
+        && !str_contains((string) ($paginaDeIngreso->headers()['Location'] ?? ''), '/admin'));
+check('y la página explica que hay una sesión de administración abierta',
+    fn () => str_contains($paginaDeIngreso->content(), 'sesión de administración'));
+check('que se puede cerrar desde ahí mismo', fn () => str_contains($paginaDeIngreso->content(), '/salir'));
+
+$auth->login(['id' => $studentId, 'role_key' => 'Student']);
+$auth->refresh();
+
+check('un estudiante que ya entró no vuelve a ver el formulario',
+    fn () => runMiddleware($guestMiddleware, makeRequest('GET', '/ingresar'), ['student'])->status() === 302);
+
+$auth->logout();
+$session->flush();
+
+check('sin sesión, las dos puertas se muestran', fn () => runMiddleware($guestMiddleware, makeRequest('GET', '/ingresar'), ['student'])->status() === 200
+    && runMiddleware($guestMiddleware, makeRequest('GET', '/registro'), ['student'])->status() === 200);
+
+// Y si alguien escribe sus credenciales de administración en la puerta de
+// estudiantes, no puede acabar en «no tienes permiso»: la puerta es del área de
+// estudiantes, pero quien entra manda, así que se le deja donde administra.
+$entradaDeAdministrador = $router->dispatch(new Request([], [
+    'email' => $adminEmail,
+    'password' => $password,
+    '_token' => $csrf->token(),
+], [
+    'REQUEST_METHOD' => 'POST',
+    'REQUEST_URI' => '/ingresar',
+    'SCRIPT_NAME' => '/index.php',
+    'HTTP_HOST' => 'localhost',
+    'SERVER_NAME' => 'localhost',
+    'REMOTE_ADDR' => '203.0.113.99',
+], [], []));
+
+check('entrar por la puerta de estudiantes con una cuenta de administración lleva al panel',
+    fn () => $entradaDeAdministrador->status() === 302
+        && str_ends_with((string) ($entradaDeAdministrador->headers()['Location'] ?? ''), '/admin'));
+
+$auth->logout();
+$session->flush();
 
 // -----------------------------------------------------------------------------
 // 6. Caducidad de la sesión por inactividad

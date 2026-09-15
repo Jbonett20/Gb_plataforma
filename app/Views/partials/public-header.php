@@ -31,7 +31,6 @@ $navHref = static function (string $href) use ($anchorPrefix): string {
 // El acceso de estudiantes es una función de la plataforma, no una sección del
 // contenido, así que se dibuja aquí y no en los bloques administrables: tiene
 // que estar siempre y en todas las páginas.
-$isLoggedIn = app(\GB\Support\Auth::class)->check();
 ?>
 <header id="header" class="header d-flex align-items-center sticky-top">
   <div class="container-fluid container-xl position-relative d-flex align-items-center">
@@ -51,19 +50,60 @@ $isLoggedIn = app(\GB\Support\Auth::class)->check();
       <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
     </nav>
 
-    <div class="header-account d-flex align-items-center gap-3">
-      <?php if ($isLoggedIn): ?>
-        <a class="header-account__link" href="<?= e(url('mi-cuenta')) ?>">
-          <i class="bi bi-person-check me-1"></i>Mi cuenta
-        </a>
+    <?php
+    // El encabezado muestra una cosa u otra según haya sesión, y las dos son
+    // funciones de la plataforma —no secciones del contenido—, así que se
+    // dibujan aquí y no en los bloques administrables:
+    //
+    //   - sin sesión: las dos puertas al área de estudiantes, iguales entre sí
+    //     (entrar y crear cuenta);
+    //   - con sesión: quién eres. Un icono, tu nombre y la salida, para que se
+    //     vea de un vistazo que hay una sesión abierta y se pueda cerrar desde
+    //     cualquier página.
+    //
+    // El panel de administración tiene su propia dirección y no se anuncia aquí.
+    //
+    // Quien manda es `check()`, que mira la sesión en cada llamada. `user()` en
+    // cambio recuerda lo que leyó la primera vez, así que no se consulta si no
+    // hay sesión: si no, se podría pintar el nombre de alguien que ya salió.
+    $haySesion = auth()->check();
+    $authUser = $haySesion ? (auth()->user() ?? []) : [];
+    $esAdmin = $haySesion && auth()->isAdmin();
+    $nombre = trim((string) ($authUser['name'] ?? ''));
+    $nombreCompleto = trim($nombre . ' ' . (string) ($authUser['last_name'] ?? ''));
+    $areaUrl = url($esAdmin ? 'admin' : 'mi-cuenta');
+    $areaLabel = $esAdmin ? 'Ir al panel' : 'Mi cuenta';
+
+    $accountButtons = setting('header_buttons_visible', '1') === '1' ? [
+        ['label' => setting('header_login_label', 'Inicia sesión'), 'url' => url('ingresar')],
+        ['label' => setting('header_register_label', 'Regístrate'), 'url' => url('registro')],
+    ] : [];
+    ?>
+    <div class="header-account d-flex align-items-center">
+      <?php if ($haySesion): ?>
+        <details class="header-account__menu">
+          <summary class="header-account__user" title="Sesión abierta como <?= e($nombreCompleto) ?>">
+            <i class="bi bi-person-check-fill" aria-hidden="true"></i>
+            <span class="header-account__name"><?= e($nombre !== '' ? $nombre : 'Mi sesión') ?></span>
+            <i class="bi bi-chevron-down header-account__caret" aria-hidden="true"></i>
+          </summary>
+
+          <div class="header-account__dropdown">
+            <p class="header-account__hi">
+              Sesión abierta como <strong><?= e($nombreCompleto) ?></strong>
+            </p>
+            <a href="<?= e($areaUrl) ?>"><?= e($areaLabel) ?></a>
+            <form method="post" action="<?= e(url('salir')) ?>">
+              <?= csrf_field() ?>
+              <button type="submit">Cerrar sesión</button>
+            </form>
+          </div>
+        </details>
       <?php else: ?>
-        <a class="header-account__link" href="<?= e(url('ingresar')) ?>">
-          <i class="bi bi-box-arrow-in-right me-1"></i>Entrar
-        </a>
-        <a class="header-account__link" href="<?= e(url('registro')) ?>">Crear cuenta</a>
+        <?php foreach ($accountButtons as $button): ?>
+          <a class="header-account__button" href="<?= e($button['url']) ?>"><?= e($button['label']) ?></a>
+        <?php endforeach; ?>
       <?php endif; ?>
     </div>
-
-    <a class="btn-getstarted" href="<?= e($navHref('#contact')) ?>">EMPEZAR</a>
   </div>
 </header>

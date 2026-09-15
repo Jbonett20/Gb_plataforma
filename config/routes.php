@@ -126,6 +126,11 @@ return static function (Router $router): void {
     $router->post('/admin/usuarios/{id}/estado', 'Admin\\UserController@changeStatus', [...$adminMedia], 'admin.users.status');
     $router->get('/admin/accesos-contenido', 'Admin\\ContentAccessController@index', ['auth', 'role:SuperAdmin'], 'admin.content-access');
     $router->get('/admin/modulos', 'Admin\\ModuleController@index', ['auth', 'role:SuperAdmin'], 'admin.modules');
+
+    // Ajustes del sitio editables (textos del encabezado, y los que se declaren
+    // en config/admin_labels.php).
+    $router->get('/admin/ajustes/{screen}', 'Admin\\SettingController@index', ['auth', 'role:SuperAdmin'], 'admin.settings');
+    $router->post('/admin/ajustes/{screen}', 'Admin\\SettingController@save', [...$adminMedia], 'admin.settings.save');
     $router->post('/admin/modulos/{id}', 'Admin\\ModuleController@update', [...$adminMedia], 'admin.modules.update');
     // Borrado definitivo en dos pasos: primero la advertencia, después la confirmación.
     $router->get('/admin/modulos/{id}/borrar', 'Admin\\ModuleController@confirmDelete', ['auth', 'role:SuperAdmin'], 'admin.modules.delete');
@@ -145,11 +150,11 @@ return static function (Router $router): void {
     // `throttle:login,email` cuenta por cuenta y por origen, no sólo por origen:
     // así un ataque contra una cuenta concreta no bloquea a todo el que sale a
     // internet desde el mismo sitio.
-    $router->get('/ingresar', 'AuthController@showLogin', ['guest'], 'login');
-    $router->post('/ingresar', 'AuthController@login', ['guest', 'csrf', 'throttle:login,email'], 'login.attempt');
+    $router->get('/ingresar', 'AuthController@showLogin', ['guest:student'], 'login');
+    $router->post('/ingresar', 'AuthController@login', ['guest:student', 'csrf', 'throttle:login,email'], 'login.attempt');
 
-    $router->get('/registro', 'AuthController@showRegister', ['guest'], 'register');
-    $router->post('/registro', 'AuthController@register', ['guest', 'csrf', 'throttle:register,email'], 'register.store');
+    $router->get('/registro', 'AuthController@showRegister', ['guest:student'], 'register');
+    $router->post('/registro', 'AuthController@register', ['guest:student', 'csrf', 'throttle:register,email'], 'register.store');
 
     $router->post('/salir', 'AuthController@logout', ['auth', 'csrf'], 'logout');
 

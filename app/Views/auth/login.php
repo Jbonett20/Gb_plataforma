@@ -28,6 +28,8 @@ $errorFor = static function (string $field) use ($errors): string {
           <h2 class="account-card__title">Iniciar sesión</h2>
           <p class="account-card__lead">Entra para continuar con tus cursos y tus descargas.</p>
 
+          <?php require GB_APP_PATH . '/Views/partials/student-door-notice.php'; ?>
+
           <?php if ($message !== ''): ?>
             <div class="account-alert account-alert--error" role="alert"><?= e($message) ?></div>
           <?php endif; ?>

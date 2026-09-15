@@ -54,6 +54,9 @@ $check = static function (string $label, bool $ok, string $detail = '') use (&$f
 };
 
 $auditBefore = (int) $pdo->query('SELECT COALESCE(MAX(id), 0) FROM audit_logs')->fetchColumn();
+// Puede haber cuentas de administración reales en la base: los conteos de esta
+// prueba se hacen siempre en relación con las que ya existían.
+$adminsAntes = $users->countActiveAdmins();
 $creadas = [];
 
 $ip = '203.0.113.60';
@@ -190,24 +193,42 @@ try {
     $send('POST', '/admin/usuarios/' . $jefeId . '/estado', ['status' => 'inactive']);
     $check('nadie desactiva su propia cuenta', str_contains($lastFlash(), 'tu propia cuenta'));
 
-    // Con dos administradores activos se puede degradar al otro
-    $check('hay dos administradores activos', $users->countActiveAdmins() === 2);
+    // Con dos administradores de esta prueba se puede degradar al otro
+    $check('hay dos administradores activos de la prueba', $users->countActiveAdmins() === $adminsAntes + 2,
+        'activos: ' . $users->countActiveAdmins() . ' (antes de la prueba: ' . $adminsAntes . ')');
     $send('POST', '/admin/usuarios/' . $nuevoId . '/rol', ['role' => 'Student']);
-    $check('con dos administradores sí se puede degradar a otro', $users->countActiveAdmins() === 1);
+    $check('con dos administradores sí se puede degradar a otro', $users->countActiveAdmins() === $adminsAntes + 1);
 
     // La red de seguridad del servicio: no se puede degradar al último
     // administrador aunque la petición llegue por otra vía. Desde el panel esta
     // situación no se alcanza, porque quien la pide es también administrador
     // activo (y si es el último, es él mismo, lo que ya se impide antes).
-    $resultadoServicio = $cuentas->changeRole($jefeId, 'Student', 0);
-    $check('la red de seguridad impide quitar el rol al último administrador',
-        !$resultadoServicio->succeeded() && str_contains($resultadoServicio->message(), 'última cuenta'),
-        $resultadoServicio->message());
-    $check('y el administrador sigue siéndolo', $users->countActiveAdmins() === 1);
+    //
+    // Para comprobarlo sin tocar las cuentas reales, se dejan fuera de juego
+    // dentro de una transacción que después se deshace.
+    $pdo->beginTransaction();
+    $resultadoServicio = null;
+    $resultadoEstado = null;
 
-    $resultadoServicio = $cuentas->changeStatus($jefeId, 'inactive', 0);
+    try {
+        $pdo->exec('UPDATE users SET status = "inactive" WHERE id <> ' . $jefeId
+            . ' AND role_id = (SELECT id FROM roles WHERE key_name = "SuperAdmin")');
+
+        $resultadoServicio = $cuentas->changeRole($jefeId, 'Student', 0);
+        $resultadoEstado = $cuentas->changeStatus($jefeId, 'inactive', 0);
+        $adminsConUnoSolo = $users->countActiveAdmins();
+    } finally {
+        $pdo->rollBack();
+    }
+
+    $check('la red de seguridad impide quitar el rol al último administrador',
+        $resultadoServicio !== null && !$resultadoServicio->succeeded()
+        && str_contains($resultadoServicio->message(), 'última cuenta'),
+        $resultadoServicio === null ? '' : $resultadoServicio->message());
     $check('tampoco se puede desactivar al último administrador',
-        !$resultadoServicio->succeeded() && $users->countActiveAdmins() === 1);
+        $resultadoEstado !== null && !$resultadoEstado->succeeded());
+    $check('y la cuenta sigue siendo administradora',
+        (string) $pdo->query('SELECT r.key_name FROM users u INNER JOIN roles r ON r.id = u.role_id WHERE u.id = ' . $jefeId)->fetchColumn() === 'SuperAdmin');
 
     // ----------------------------------------------------------- Auditoría
     echo 'Registro de lo ocurrido' . PHP_EOL;
@@ -233,10 +254,12 @@ try {
     $pdo->exec('DELETE FROM throttle WHERE identifier LIKE "203.0.113.60%"');
 }
 
-$restantes = (int) $pdo->query('SELECT COUNT(*) FROM users')->fetchColumn();
+$restantes = (int) $pdo->query('SELECT COUNT(*) FROM users WHERE email LIKE "zz-%"')->fetchColumn();
 
+// Las cuentas reales del despacho pueden seguir ahí: esta prueba sólo responde
+// de las suyas.
 echo str_repeat('-', 70) . PHP_EOL;
-echo 'Cuentas restantes: ' . $restantes . PHP_EOL;
+echo 'Cuentas de prueba restantes: ' . $restantes . PHP_EOL;
 echo $failures === 0 && $restantes === 0
     ? "Resultado: todas las comprobaciones pasaron.\n"
     : "Resultado: {$failures} comprobación(es) fallaron.\n";

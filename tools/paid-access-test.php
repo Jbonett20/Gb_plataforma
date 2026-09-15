@@ -382,7 +382,7 @@ $leftovers = (int) $pdo->query('SELECT COUNT(*) FROM courses')->fetchColumn()
     + (int) $pdo->query('SELECT COUNT(*) FROM lessons')->fetchColumn()
     + (int) $pdo->query('SELECT COUNT(*) FROM payments')->fetchColumn()
     + (int) $pdo->query('SELECT COUNT(*) FROM enrollments')->fetchColumn()
-    + (int) $pdo->query('SELECT COUNT(*) FROM users')->fetchColumn();
+    + (int) $pdo->query('SELECT COUNT(*) FROM users WHERE email LIKE "zz-%"')->fetchColumn();
 $fileLeft = $createdFile !== null && is_file(GB_STORAGE_PATH . '/protected/' . $createdFile);
 
 echo str_repeat('-', 70) . PHP_EOL;
